@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Couple Quest</title>
+<style>
+:root{--bg:#100e16;--panel:#1c1725;--panel2:#261d32;--text:#f4edf9;--muted:#b8a9c9;--pink:#e8a9c9;--violet:#c7a4ff;--line:#493756;--gold:#e8c98a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#30203d 0%,#15111c 48%,#0d0b12 100%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{width:min(900px,100%);margin:auto;padding:24px 16px 48px}
+header{border:1px solid var(--line);background:linear-gradient(135deg,#241a31ee,#17121fee);border-radius:22px;padding:24px;position:relative;overflow:hidden}
+header:after{content:"✦  ·  ☾  ·  ✧";position:absolute;right:20px;top:18px;color:#8b70a7;letter-spacing:8px}
+.eyebrow{font-size:.72rem;letter-spacing:.18em;color:var(--pink);font-weight:700}
+h1{font-size:clamp(2rem,7vw,3.5rem);line-height:1.05;margin:12px 0 8px;letter-spacing:-.04em}
+.subtitle{color:var(--muted);max-width:570px;line-height:1.6}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:#e4d6f1;font-size:.8rem;background:#130f1b}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+button{font:inherit;cursor:pointer;border:1px solid #6e5386;border-radius:12px;background:#2a2038;color:var(--text);padding:11px 14px;transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--violet);background:#382648}
+button:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+button.primary{background:linear-gradient(135deg,#714a83,#50345f);border-color:#b28bca}
+button.small{font-size:.85rem;padding:8px 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);background:linear-gradient(160deg,#211a2c,#17131f);border-radius:18px;padding:18px;min-width:0}
+.card h2{margin:0 0 8px;font-size:1.1rem}
+.card p{color:var(--muted);line-height:1.55;margin:7px 0 14px}
+.tag{font-size:.72rem;color:var(--gold);letter-spacing:.12em;text-transform:uppercase}
+.quest{display:flex;align-items:flex-start;gap:12px}
+.icon{font-size:1.5rem;background:#30223c;border:1px solid var(--line);border-radius:12px;padding:9px;line-height:1}
+.quest .copy{flex:1}
+.hidden{display:none!important}
+.panel{margin-top:14px;border:1px solid #76568b;background:#21182c;border-radius:16px;padding:18px;line-height:1.7}
+.panel h3{margin-top:0}
+.letter{font-family:Georgia,serif;font-size:1.08rem;color:#f5e8f4;white-space:pre-line}
+footer{color:#8f809e;font-size:.78rem;text-align:center;margin-top:22px;line-height:1.6}
+input,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#100d16;color:var(--text);font:inherit;margin:6px 0 12px}
+textarea{min-height:90px;resize:vertical}
+label{font-size:.86rem;color:#d5c7e1}
+@media(max-width:620px){.grid{grid-template-columns:1fr}header{padding:20px}header:after{display:none}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">SAVE FILE 001 · CAMPANHA COMPARTILHADA</div>
+  <h1>The Couple Quest <span style="color:var(--pink)">♥</span></h1>
+  <div class="subtitle">Dois jogadores, um só time. Um pequeno portal de cartas, missões e segredos para a nossa aventura.</div>
+  <div class="stats"><span class="pill">☾ Player 1</span><span class="pill">✦ Player 2</span><span class="pill" id="xp">✧ XP: 0</span></div>
+</header>
+<nav aria-label="Navegação">
+  <button class="primary" onclick="showSection('home')">⌂ Base</button>
+  <button onclick="showSection('quests')">⚔ Missões</button>
+  <button onclick="showSection('letters')">✉ Cartas</button>
+  <button onclick="showSection('inventory')">♧ Inventário</button>
+  <button onclick="showSection('secret')">🔒 Segredo</button>
+</nav>
+<section id="home">
+  <div class="grid">
+    <article class="card">
+      <div class="tag">Missão ativa</div>
+      <h2>O artefato perdido</h2>
+      <p>Escolha uma lembrança de vocês que merecia virar item lendário.</p>
+      <button class="primary" onclick="completeQuest()">Aceitar missão</button>
+      <div id="questResult" class="panel hidden"></div>
+    </article>
+    <article class="card">
+      <div class="tag">Mensagem do dia</div>
+      <h2>Uma notificação do seu duo</h2>
+      <p id="dailyPreview">Tem alguém que escolheria jogar em dupla com você em qualquer universo. ♥</p>
+      <button onclick="revealLetter()">Abrir mensagem</button>
+      <div id="dailyLetter" class="panel hidden letter"></div>
+    </article>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="tag">Aviso da guilda</div>
+    <h2>Bem-vindo de volta, aventureiro.</h2>
+    <p>Explore as abas. Algumas surpresas são demonstrativas nesta versão; depois podemos preparar a publicação e a sincronização entre celular e computador.</p>
+  </div>
+</section>
+<section id="quests" class="hidden">
+  <div class="card">
+    <div class="tag">Quadro de missões</div><h2>Escolha sua próxima quest</h2>
+    <div class="panel">
+      <div class="quest"><div class="icon">🎮</div><div class="copy"><b>Quest secundária: escolha do duo</b><p>Qual jogo vocês deveriam jogar juntos numa noite livre?</p><button class="small" onclick="chooseQuest('Jogo escolhido! Convide sua Player 2 para uma sessão cooperativa.')">Concluir missão</button></div></div>
+    </div>
+    <div class="panel">
+      <div class="quest"><div class="icon">🌙</div><div class="copy"><b>Missão: outro universo</b><p>Se o namoro de vocês fosse um RPG, qual seria o nome da campanha?</p><button class="small" onclick="chooseQuest('Nova lore desbloqueada: inventem juntos o nome da campanha de vocês.')">Desbloquear lore</button></div></div>
+    </div>
+    <div class="panel">
+      <div class="quest"><div class="icon">💌</div><div class="copy"><b>Missão lendária: elogio crítico</b><p>Envie uma mensagem dizendo uma coisa que você admira nele.</p><button class="small" onclick="chooseQuest('Conquista desbloqueada: +25 XP de carinho.')">Receber recompensa</button></div></div>
+    </div>
+    <div id="questNotice" class="panel hidden"></div>
+  </div>
+</section>
+<section id="letters" class="hidden">
+  <div class="grid">
+    <article class="card"><div class="tag">Carta #001</div><h2>Para meu jogador favorito</h2><p class="letter">Oi, meu amor. ♥\n\nNão importa quantos chefes apareçam pelo caminho, você continua sendo meu parceiro favorito de aventura.\n\n— Sua Player 2</p><button onclick="toggle('letterExtra')">Abrir pós-créditos</button><div id="letterExtra" class="panel hidden">P.S.: essa campanha fica melhor porque é com você. ✦</div></article>
+    <article class="card"><div class="tag">Criador de cartas</div><h2>Escreva um recadinho</h2><label for="letterTitle">Título da carta</label><input id="letterTitle" placeholder="Ex.: Uma poção para dias difíceis"><label for="letterText">Mensagem</label><textarea id="letterText" placeholder="Escreva aqui sua cartinha..."></textarea><button class="primary" onclick="saveLocalLetter()">Guardar neste navegador</button><p id="saveStatus" aria-live="polite"></p><div id="savedLetters"></div></article>
+  </div>
+</section>
+<section id="inventory" class="hidden">
+  <div class="card"><div class="tag">Inventário compartilhado (protótipo)</div><h2>Itens lendários</h2><div class="panel">📸 <b>Memória rara</b><br>Uma lembrança que sempre faz vocês sorrirem.</div><div class="panel">🗝️ <b>Chave do portal</b><br>Uma piada interna que só vocês entendem.</div><div class="panel">❤️ <b>Poção de cura</b><br>Uma mensagem para ler num dia difícil.</div><p>Depois você poderá trocar estes exemplos por memórias reais de vocês.</p></div>
+</section>
+<section id="secret" class="hidden">
+  <div class="card"><div class="tag">Área restrita</div><h2>Uma fechadura misteriosa...</h2><p>Descubra a palavra-chave para ver a surpresa de demonstração.</p><label for="secretKey">Palavra-chave</label><input id="secretKey" placeholder="Dica: quem joga com você?"><button class="primary" onclick="unlockSecret()">Tentar desbloquear</button><div id="secretMessage" class="panel hidden"></div><p style="font-size:.8rem">Este cadeado é apenas uma brincadeira visual, não protege conteúdo privado de verdade.</p></div>
+</section>
+<footer>Protótipo local · Os botões funcionam neste arquivo. As alterações não são sincronizadas automaticamente entre dispositivos.<br>Feito para uma campanha de dois jogadores. ✦</footer>
+</main>
+<script>
+let xp=0;
+function showSection(id){document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function toggle(id){document.getElementById(id).classList.toggle('hidden')}
+function completeQuest(){const el=document.getElementById('questResult');el.classList.remove('hidden');el.innerHTML='<h3>✦ Missão aceita!</h3><p>Objetivo: escolha uma lembrança de vocês e deem a ela um nome de item lendário.</p><p><b>Recompensa:</b> +10 XP de carinho.</p>';addXp(10)}
+function chooseQuest(msg){const el=document.getElementById('questNotice');el.textContent=msg;el.classList.remove('hidden');addXp(5)}
+function addXp(n){xp+=n;document.getElementById('xp').textContent='✧ XP: '+xp}
+function revealLetter(){const el=document.getElementById('dailyLetter');el.textContent='Oi, meu jogador favorito. ♥\\n\\nSe eu pudesse escolher qualquer universo, ainda escolheria formar dupla com você. Obrigada por ser meu lugar seguro nessa aventura.\\n\\n— Sua Player 2';el.classList.remove('hidden')}
+function saveLocalLetter(){const title=document.getElementById('letterTitle').value.trim()||'Carta sem título';const text=document.getElementById('letterText').value.trim();if(!text){document.getElementById('saveStatus').textContent='Escreva uma mensagem antes de guardar.';return}let list=JSON.parse(localStorage.getItem('coupleQuestLetters')||'[]');list.unshift({title,text});localStorage.setItem('coupleQuestLetters',JSON.stringify(list));document.getElementById('letterTitle').value='';document.getElementById('letterText').value='';document.getElementById('saveStatus').textContent='Carta guardada neste navegador!';renderLetters()}
+function renderLetters(){const list=JSON.parse(localStorage.getItem('coupleQuestLetters')||'[]');document.getElementById('savedLetters').innerHTML=list.map(x=>'<div class="panel"><b>'+escapeHtml(x.title)+'</b><p style="white-space:pre-wrap">'+escapeHtml(x.text)+'</p></div>').join('')}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function unlockSecret(){const ok=document.getElementById('secretKey').value.trim().toLowerCase();const el=document.getElementById('secretMessage');el.classList.remove('hidden');el.textContent=(ok==='player 2'||ok==='player2'||ok==='duo'||ok==='amor')?'🔓 Segredo desbloqueado! Minha parte favorita de qualquer aventura é ter você no meu time. ♥':'🔒 Ainda está trancado... Dica: tente “Player 2”.';}
+renderLetters();
+</script>
+</body>
+</html>
